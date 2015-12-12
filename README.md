@@ -1,3 +1,7 @@
-# Funktionale Programmierung mit Java 8
+# Funktionale Programmierung
 
-Presentation based on [reveal.js](http://lab.hakim.se/reveal-js/#/).
+Presentation "Funktionale Programmierung mit Java 8 für Pragmatiker" (german).
+
+# Credits
+
+Powered by [reveal.js](http://lab.hakim.se/reveal-js/#/).
