@@ -1,10 +1,16 @@
 # Funktionale Programmierung mit Java 8
 
-... ein pragmatischer Ansatz (ohne viel Mathe)
+... ein pragmatischer Ansatz
+
+Note: Pragmatisch da ohne viel Mathe
+
+
 
 # Was bedeuted FP?
 
 Funktionale Programmierung = FP
+
+
 
 ## Imperative Programmierung
 
@@ -12,6 +18,8 @@ Allgemein bekannt -- hoffentlich
 
 - Beschreibe *imperativ* **wie** etwas getan werden muss
 - Schritt für Schritt Anleitung
+
+
 
 ## Im Gegensatz dazu: Funktionale Programmierung
 
