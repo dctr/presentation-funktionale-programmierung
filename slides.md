@@ -1,6 +1,6 @@
 # Funktionale Programmierung mit Java 8
 
-... ein pragmatischer Ansatz
+... für Pragmatiker
 
 Note: Pragmatisch da ohne viel Mathe
 
