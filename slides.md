@@ -1,39 +1,42 @@
-# Funktionale Programmierung mit Java 8
+## Funktionale Programmierung
 
-– für Pragmatiker
+- Mit Java 8
+- Für Pragmatiker
 
-Note: Pragmatisch da ohne viel Mathe
+Note: Praxisorientiert, ohne mathematisches Fundament
 
 
 
-# Was ist FP?
+## Was ist FP?
 
 Funktionale Programmierung
 
 
-## Imperative Programmierung
+### Imperative Programmierung
 
-Allgemein bekannt – hoffentlich
-
-- Beschreibe *imperativ* **wie** etwas getan werden muss
+- Beschreibe **wie** etwas getan werden muss
 - Schritt für Schritt Anleitung
 
-
-## Im Gegensatz dazu: Funktionale Programmierung
-
-- Beschreibe *funktional* **was** getan werden muss
-- Beschäftigt sich weniger mit dem "wie"
+Note: Allgemein bekannt – hoffentlich
 
 
+### Funktionale Programmierung
 
-# Herleitung über bekannte Grundlagen
-
-**Das Command Pattern** (siehe Vortrag von Thomas Kopp)
-
-Kapselt konkretes Verhalten hinter einem abstrakten Interface
+- Beschreibe **was** getan werden muss
+- Beschäftigt sich nicht mit dem "wie"
 
 
-## Interface
+
+## Voraussetzung
+
+Grundbaustein: Kapselung dieses *"was"*
+
+**Das Command Pattern:** Kapselt Verhalten hinter Interface
+
+Note: Wie eben im Vortrag von Thomas gehört
+
+
+### Interface
 
 ```java
 @FunctionalInterface
@@ -42,10 +45,10 @@ public interface Command {
 }
 ```
 
-Annotaion `@FunctionalInterface` aus Java 8 erstmal ignorieren.
+(Annotaion erstmal ignorieren)
 
 
-## Implementierung
+### Aufruf mit dedizierter Klasse
 
 ```java
 public class MyCommand implements Command {
@@ -53,108 +56,91 @@ public class MyCommand implements Command {
         // Do something meaningful.
     }
 }
+
+executor.doSomeAction(new MyCommand());
 ```
 
 
-## Aufruf klassisch, mit dedizierter Klasse
+### Aufruf mit anonymer Klasse
 
 ```java
-public class Main {
-    public static void main(String[] args) {
-        Executor e = new Executor();
-        e.doSomeAction(new MyCommand());
+executor.doSomeAction(new Command() {
+    void execute(Object param) {
+        // Do something meaningful.
     }
-}
-```
-
-
-## Aufruf klassisch, mit anonymer Klasse
-
-Anonyme Klassen statt separater Implementierung
-
-```java
-public class Main {
-    public static void main(String[] args) {
-        Executor e = new Executor();
-        e.doSomeAction(new Command() {
-            void execute(Object param) {
-                // Do something meaningful.
-            }
-        });
-    }
-}
-```
-
-
-## Aufruf mit Java 8 Lambda-Ausdruck
-
-```java
-public class Main {
-    public static void main(String[] args) {
-        Executor e = new Executor();
-        e.doSomeAction((Object param) -> {
-            // Do something meaningful.
-        });
-    }
-}
-```
-
-
-## Kurzschreibweisen
-
-```java
-List<String> teamSchadow = Arrays.asList("Dominik", "Sandro", "Jochen", ...);
-```
-
-```java
-friends.forEach((String name) -> {
-    System.out.println(name)
 });
 ```
 
-- Automatische Typinferenz
-- Keine geschweiften Klammern bei Einzeilern
+
+### TADA: Aufruf mit Lambda-Ausdruck
+
+```java
+executor.doSomeAction((Object param) -> {
+    // Do something meaningful.
+});
+```
+
+
+### Kurzschreibweisen
+
+```java
+List<String> teamSchadow =
+    Arrays.asList("Dominik", "Sandro", "Jochen", ...);
+```
+
+```java
+teamSchadow.forEach((String name) -> {
+    System.out.println(name)
+});
+```
 
 ```java
 teamSchadow.forEach(name -> System.out.println(name));
 ```
 
-- Methodenreferenz (yey, function pointers!), wenn Parameter 1:1 übernommen wird
-
 ```java
 teamSchadow.forEach(System.out::println);
 ```
-
-- Wie auch bei anonymen Klassen in Variablen speicherbar
 
 ```java
 Consumer<String> myPrintLn = name -> System.out.println(name);
 teamSchadow.forEach(myPrintLn);
 ```
 
+Note:
+- Automatische Typinferenz
+- Keine geschweiften Klammern bei Einzeilern
+- Methodenreferenz (yey, function pointers!), wenn Parameter 1:1 übernommen wird
+- Wie auch bei anonymen Klassen in Variablen speicherbar
 
 
-# Functional Interfaces
+## `@FunctionalInterface`
 
-- Lambda ist quasi nur Kurzschreibweise für anonyme Klasse
-- `@FunctionalInterface`s sind Interfaces mit *exakt* einer Methode
-- Bei Angabe eines Lambda-Ausdrucks daher automatische Typinferenz möglich
+- Lambda nur Kurzschreibweise für anonyme Klasse
+- FIs haben *eine* (abstrakte) Methode
+- Durch Interface automatische Typinferenz möglich
+
+Note:
+- Die Annotation von eben
+- Interfaces in Java 8 können default Methoden haben.
 
 
-## Anwendungsfälle
+### Anwendungsfälle
 
-- Wie Command Pattern (offensichtlicherweise)
-- Definieren von (asynchronen) Callbacks (s. auch mein Vert.X-Vortrag)
-- Coole Dinge, die wir in diesem Vortrag sehen werden
+- Command Pattern
+- Callbacks
 - ... u. v. m.
+- Coole Dinge, die wir in diesem Vortrag sehen werden
+
+Note: Callbacks für asynchrone Programmierung, s. auch mein Vert.X-Vortrag
 
 
-## FP Beispiel
+## Vom Command Pattern zu FP
 
-Summiere alle Preise über 20 EUR, ermäßigt um 10 %
+**Beispiel:** Summiere Preise über 20 EUR, ermäßigt um 10 %
 
 
-## Stufe 1 - Wie in alten Tagen
+### Stufe 1 - Wie in alten Tagen
 
 ```java
 Collection<BigDecimal> prices = MyApi.getPrices();
@@ -165,8 +151,8 @@ int i = 0;
 while (i < prices.size()) {
     price = prices.get(i);
     if (price.compareTo(BigDecimal.valueOf(20)) > 0) {
-        totalOfDiscountedPrices =
-                totalOfDiscountedPrices.add(price.multiply(BigDecimal.valueOf(0.9)));
+        totalOfDiscountedPrices = totalOfDiscountedPrices
+            .add(price.multiply(BigDecimal.valueOf(0.9)));
     }
     i++
 }
@@ -175,7 +161,7 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
 
-## Stufe 2 - Syntaktischer Zucker
+### Stufe 2 - Syntaktischer Zucker
 
 ```java
 Collection<BigDecimal> prices = MyApi.getPrices();
@@ -183,41 +169,48 @@ BigDecimal totalOfDiscountedPrices = BigDecimal.ZERO;
 
 for (BigDecimal price : prices) {
     if (price.compareTo(BigDecimal.valueOf(20)) > 0) {
-        totalOfDiscountedPrices =
-                totalOfDiscountedPrices.add(price.multiply(BigDecimal.valueOf(0.9)));
+        totalOfDiscountedPrices = totalOfDiscountedPrices
+            .add(price.multiply(BigDecimal.valueOf(0.9)));
     }
 }
 
 System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
+Note: Erlaubt kompaktere Syntax, Denk- und Funktionsweise ist aber gleich.
 
-## Stufe 3 - Eine neue Welt
 
-Java 8: Stream-API und Lambdas = "Funktionale Programmierung" (-artig)
+### Stufe 3 - Eine neue Welt
 
 ```java
-final BigDecimal totalOfDiscountedPrices = MyApi.getPrices().stream()
-        .filter(price -> price.compareTo(BigDecimal.valueOf(20)) > 0)
-        .map(price -> price.multiply(BigDecimal.valueOf(0.9)))
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+final BigDecimal totalOfDiscountedPrices = MyApi
+    .getPrices().stream()
+    .filter(price -> price.compareTo(BigDecimal.valueOf(20)) > 0)
+    .map(price -> price.multiply(BigDecimal.valueOf(0.9)))
+    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
 System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
+Note:
+- WAS filtern wir, bzw. WAS bilden wir ab
+- Nicht WIE (Iteration, Collections manipulieren)!
+- Auf Einzelelement-basis
 
 
-# Fragen soweit?
+
+## Fragen soweit?
 
 - Grundidee sollte ab hier klar sein
 - Verständnisfragen bitte jetzt
 
+Note: Grundidee = Kapselung von Logik
 
 
-# Warum FP?
+## Warum FP?
 
 
-## Nachteile imperativer Programmierung
+### Nachteile imperativer Programmierung
 
 - Redundanter, manuell erstellter Code (lies: Fehler)
   - Boilerplate-Code (Deklaration anonymer Klassen VS Lambda-Syntax)
@@ -226,7 +219,7 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 - Vermischt was *was* (auszuführende Aktion, aka Command) mit dem *wie* (iterieren, ...)
 
 
-## Vorteile funktionaler Programmierung
+### Vorteile funktionaler Programmierung
 
 - Prägnant und Ausdrucksstark (Boilerplate Code aus Bibliothek unter der Haube)
 - Näher an natürlicher Sprache (intuitiver, lesbarer, wartbarer)
@@ -235,7 +228,7 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 
 
 
-# Was bedeutet FP (in grauer Theorie)?
+## Was bedeutet FP (in grauer Theorie)?
 
 - Deklarativ (Ausdruck über Anweisung, das viel wiederholte *was* statt *wie*)
 - Unveränderbarkeit (keine Mutation externer Variablen, jedes Lambda gibt Ergebnis an nächstes weiter)
@@ -244,7 +237,7 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 
 
 
-# Umsetzung – Teil 1: Java Boardmittel & Grundverben
+## Umsetzung – Teil 1: Java Boardmittel & Grundverben
 
 Am Beispiel der neuen Stream API aus Java 8
 
@@ -255,7 +248,7 @@ Am Beispiel der neuen Stream API aus Java 8
   - ...
 
 
-## Fluent-API
+### Fluent-API
 
 - Rückgabewert der meisten Grundverben wieder ein Stream
 - Aktionen manipulieren Stream
@@ -269,7 +262,7 @@ collection.stream()
 ```
 
 
-## stream() => 1:n
+### stream() => 1:n
 
 `Stream<T> Collection<T>::stream()`
 
@@ -282,7 +275,7 @@ collection.stream().someAction(lambda);
 - `someAction`s lambda wird für jedes Element der Collection ein Mal aufgerufen
 
 
-## map() => n:n
+### map() => n:n
 
 `<R> Stream<R> Stream<T>::map(Function<? super T, ? extends R> mapper)`
 
@@ -298,7 +291,7 @@ teamSchadow.stream()
 - Single-Line-Statement => kein Return benötigt
 
 
-## filter() => n:m (m < n)
+### filter() => n:m (m < n)
 
 `Stream<T> Stream<T>::filter(Predicate<? super T> predicate)`
 
@@ -315,7 +308,7 @@ teamSchadow.stream()
 - "true"-Elemente werden propagiert
 
 
-## reduce() / collect() => n:1
+### reduce() / collect() => n:1
 
 `T Stream<T>::reduce(T identity, BinaryOperator<T> accumulator)`
 
@@ -333,7 +326,7 @@ teamSchadow.stream()
 - Rückgabewert ist einzelnes Element des Typs, kein neuer Stream
 
 
-## ... und viele mehr
+### ... und viele mehr
 
 In java.util.stream
 
@@ -350,26 +343,26 @@ java.util.Optional<T> (Javas halbherziger Versuch NPEs zu umschiffen)
 
 
 
-# Inhärente Parallelisierbarkeit
+## Inhärente Parallelisierbarkeit
 
 `streamParallel()` statt `stream()`, so einfach geht das.
 
 
-## Inhärente Parallelisierbarkeit II
+### Inhärente Parallelisierbarkeit II
 
 Die Einfachheit der Anpassung (und damit einhergehend die Folienanzahl) wird der Mächtigkeit kaum gerecht.
 
 
-## Inhärente Parallelisierbarkeit III
+### Inhärente Parallelisierbarkeit III
 
 Daher strecke ich auf mehrere Folien :-)
 
 
 
-# Umsetzung – Teil 2: Bibliotheken & Sprachen
+## Umsetzung – Teil 2: Bibliotheken & Sprachen
 
 
-## [ReactiveX](http://reactivex.io/) (RxJava, RxJS, Rx.NET, RxPY, ...)
+### [ReactiveX](http://reactivex.io/) (RxJava, RxJS, Rx.NET, RxPY, ...)
 
 > ReactiveX is a combination of the best ideas from the Observer pattern, the Iterator pattern, and functional programming.
 
@@ -384,14 +377,14 @@ Daher strecke ich auf mehrere Folien :-)
 @Thomas: Am nächsten Entwicklertag Observer-Pattern?
 
 
-## und weitere
+### und weitere
 
 - [Functional Java](http://www.functionaljava.org/) (viel Conveniece)
 - [Google Guava](https://github.com/google/guava) (auch mit Observer)
 - ...
 
 
-## Andere JVM-Sprachen
+### Andere JVM-Sprachen
 
 - [Clojure](http://clojure.org/) (Lisp-Dialekt; JVM, CLR, JS)
 - [Scala](http://www.scala-lang.org/) (nicht strikt-funktional, wie Java auch, aber "optimierter" für FP; JVM, JS)
@@ -400,7 +393,7 @@ Daher strecke ich auf mehrere Folien :-)
 
 
 
-# Umsetzung – Teil 3: Eigenen Code funktional zugänglich machen
+## Umsetzung – Teil 3: Eigenen Code funktional zugänglich machen
 
 - Fluent API
   - `public void myMethod(param)` -> `public MyClass myMethod(param)`
@@ -420,10 +413,10 @@ Daher strecke ich auf mehrere Folien :-)
 
 
 
-# Umsetzung – Teil 4: Funktionale Entwurfsmuster
+## Umsetzung – Teil 4: Funktionale Entwurfsmuster
 
 
-## Delegates / Dependency Injection
+### Delegates / Dependency Injection
 
 ```java
 public static int totalAssetValues(final List<Asset> assets, final Predicate<Asset> assetSelector) {
@@ -443,10 +436,10 @@ System.out.println("Total of stocks: " + totalAssetValues(assets, asset -> asset
 Dependency Injection; macht auch testen einfacher (z. B. `asset -> throw new EnumConstantNotPresentException("damn");`)
 
 
-## Decorator
+### Decorator
 
 
-### Ausgangsklasse
+#### Ausgangsklasse
 
 ```java
 public class Camera {
@@ -467,7 +460,7 @@ public class Camera {
 ```
 
 
-### Decorator für Multi-Filter - klassisch
+#### Decorator für Multi-Filter - klassisch
 
 Ableitung mit Überladung `public Color capture(final Color... inputColors)`?
 
@@ -476,7 +469,7 @@ Ableitung mit Überladung `public Color capture(final Color... inputColors)`?
 Wrapper-Klasse die Camera-Instanz entgegennimmt?
 
 
-### Decorator für Multi-Filter - FP-Kompositionen
+#### Decorator für Multi-Filter - FP-Kompositionen
 
 ```java
 Function<Color, Color> myFilters = Filters::brigther.compose(Filters::sepia)
@@ -488,12 +481,12 @@ Camera multiFilterCamera = new Camera(myFilters);
 - Predicate<T>: and(...), or(...), negate()
 
 
-## Execute Around Method
+### Execute Around Method
 
 Anwendungsgebiet: Resourcen-Management
 
 
-### Klassisch
+#### Klassisch
 
 ```java
 public class Mailer {
@@ -515,7 +508,7 @@ mailer.send();
 ```
 
 
-### Funktional
+#### Funktional
 
 ```java
 public class FluentMailer {
@@ -543,7 +536,7 @@ FluentMailer.send(mailer ->
 ```
 
 
-### Vorteile des "Execute Around Method"-Pattern
+#### Vorteile des "Execute Around Method"-Pattern
 
 - Fluent => Keine Wiederholung von `mailer.*`
 - Gekapselter Scope & Lifetime
@@ -555,7 +548,7 @@ FluentMailer.send(mailer ->
   - Beugt vergessen dieses Boilerplate-Codes vor
 
 
-## Lazy Evaluation
+### Lazy Evaluation
 
 - Kostspielige Operationen sollten nur ausgeführt werden wenn nötig.
 - Eventuell entscheidet eine leichtgewichtige Vorbedingung, ob eine kostspielige Operation ausgeführt wird.
@@ -572,7 +565,7 @@ myMethod(lightBoolean, heavy1(), heavy2());
 ```
 
 
-### Lambdas
+#### Lambdas
 
 Lambdas werden "vor Ort" ausgewertet, aber nicht aufgerufen-
 
@@ -584,7 +577,7 @@ myMethod(lightBoolean, lightLambda1, lightLambda2);
 ```
 
 
-### Steam<T> ist inhärent faul
+#### Steam<T> ist inhärent faul
 
 Internmediate VS terminal
 
@@ -610,7 +603,7 @@ final String firstNameWith3Letters = names.stream()
 
 
 
-# Randnotizen
+## Randnotizen
 
 - Effective final (was von außen in einem Lambda-Ausdruck verwendet wird, ist `final`)
 - Keine checked Exceptions in Lambdas (`Function<T,R>::apply(T t)` etc. haben keine throws-Klausel)
@@ -620,10 +613,10 @@ final String firstNameWith3Letters = names.stream()
 
 
 
-# ABER
+# #ABER
 
 
-## Probleme mir "reiner" FP in Java
+### Probleme mir "reiner" FP in Java
 
 - Definition von FP hier nur oberflächlich angekratzt
   - Ist sehr mathematisch
@@ -642,7 +635,7 @@ Man kann an FP "vorbeiprogrammieren", die Konzepte mischen und so noch unübersi
 - Einiges auch schon mit Java 7 möglich (anonymous inner classes), aber warum sollten wir?
 
 
-## Nichtsdestotrotz
+### Nichtsdestotrotz
 
 Sehr hilfreich für den Alltag!
 
@@ -652,6 +645,6 @@ Sehr hilfreich für den Alltag!
 
 
 
-# Recap
+## Recap
 
 <Recaps aus FP>
