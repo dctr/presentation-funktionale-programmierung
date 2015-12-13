@@ -9,7 +9,7 @@ Note: Praxisorientiert, ohne mathematisches Fundament
 
 ## Was ist FP?
 
-Funktionale Programmierung
+Funktionale Programmierung - ein Teaser
 
 
 ### Imperative Programmierung
@@ -29,7 +29,7 @@ Note: Allgemein bekannt – hoffentlich
 
 ## Voraussetzung
 
-Grundbaustein: Kapselung dieses *"was"*
+Grundbaustein: Kapselung dieses *was*
 
 **Das Command Pattern:** Kapselt Verhalten hinter Interface
 
@@ -130,12 +130,57 @@ Note:
 - Command Pattern
 - Callbacks
 - ... u. v. m.
-- Coole Dinge, die wir in diesem Vortrag sehen werden
+- Coole Dinge, die wir in diesem Vortrag sehen werden - aka FP
 
 Note: Callbacks für asynchrone Programmierung, s. auch mein Vert.X-Vortrag
 
 
+## Fragen soweit?
+
+- Grundlagen sollten ab hier klar sein
+  - Command Pattern
+  - FunctionalInterface
+  - Lambda
+- Verständnisfragen bitte jetzt
+
+Note: Grundidee = Kapselung von Logik
+
+
+
+## Funktionale Programmierung - die Theorie
+
+- Deklarativ (Ausdruck über Anweisung, das viel wiederholte *was* statt *wie*)
+- Unveränderbarkeit (keine Mutation externer Variablen, jedes Lambda in sich geschlossen)
+- Keine Seiteneffekte (durch Unveränderbarkeit)
+- Funktionen höherer Ordnung (Funktionen nehmen Funktionen entgegen, s. auch Command)
+
+
+
+
+## Warum FP?
+
+
+### Nachteile imperativer Programmierung
+
+- Vermischt was *was* (auszuführende Aktion, aka Command) mit dem *wie* (iterieren, ...)
+- Redundanter, manuell erstellter Code (lies: Fehler)
+  - Boilerplate-Code (Deklaration anonymer Klassen)
+  - Low-Level Code (Verzweigungen, Schleifen, ...)
+  - Parallelisierung (Threads starten, Synchronisation, ...)
+
+
+### Vorteile funktionaler Programmierung
+
+- Prägnant und Ausdrucksstark (Boilerplate Code unter der Haube)
+- Näher an natürlicher Sprache (intuitiver, lesbarer, wartbarer)
+- Inhärent parallelisierbar (da unter der Haube)
+- Weniger Fehleranfällig (weniger Code, keine Variablenmuation)
+
+
+
 ## Vom Command Pattern zu FP
+
+> ... und jetzt nochmal für Pragmatiker, bitte!
 
 **Beispiel:** Summiere Preise über 20 EUR, ermäßigt um 10 %
 
@@ -199,53 +244,15 @@ Note:
 
 
 
-## Fragen soweit?
-
-- Grundidee sollte ab hier klar sein
-- Verständnisfragen bitte jetzt
-
-Note: Grundidee = Kapselung von Logik
-
-
-## Warum FP?
-
-
-### Nachteile imperativer Programmierung
-
-- Redundanter, manuell erstellter Code (lies: Fehler)
-  - Boilerplate-Code (Deklaration anonymer Klassen VS Lambda-Syntax)
-  - Low-Level Code (Verzweigungen, Schleifen, ... VS filter(), forEach(), ...)
-  - Parallelisierung (Threads starten, Synchronisation, ...)
-- Vermischt was *was* (auszuführende Aktion, aka Command) mit dem *wie* (iterieren, ...)
-
-
-### Vorteile funktionaler Programmierung
-
-- Prägnant und Ausdrucksstark (Boilerplate Code aus Bibliothek unter der Haube)
-- Näher an natürlicher Sprache (intuitiver, lesbarer, wartbarer)
-- Inhärent parallelisierbar (da unter der Haube, z. B. bei `map()`)
-- Weniger Fehleranfällig (weniger Code, keine Variablenmuation)
-
-
-
-## Was bedeutet FP (in grauer Theorie)?
-
-- Deklarativ (Ausdruck über Anweisung, das viel wiederholte *was* statt *wie*)
-- Unveränderbarkeit (keine Mutation externer Variablen, jedes Lambda gibt Ergebnis an nächstes weiter)
-- Keine Seiteneffekte (durch Unveränderbarkeit)
-- Funktionen höherer Ordnung (Funktionen nehmen Funktionen entgegen, s. auch Command)
-
-
-
 ## Umsetzung – Teil 1: Java Boardmittel & Grundverben
-
-Am Beispiel der neuen Stream API aus Java 8
 
 - java.util.stream Interface Stream<T>: Implementierer stellen Grundverben bereit
 - java.util.function gibt große Vorauswahl fertiger `FunctionalInterface`s die von Grundverben entgegengenommen werden
   - Consumer<T>: Represents an operation that accepts a single input argument and returns no result.
   - Function<T,R>: Represents a function that accepts one argument and produces a result.
   - ...
+
+Note: Am Beispiel der neuen Stream API aus Java 8
 
 
 ### Fluent-API
@@ -270,7 +277,7 @@ collection.stream()
 collection.stream().someAction(lambda);
 ```
 
-- Stream ist Iterator-ähnliches FP-Pendant seit Java 8
+- Iterator-ähnliches FP-Pendant seit Java 8
 - Vgl. `iterable.forEach(func)`
 - `someAction`s lambda wird für jedes Element der Collection ein Mal aufgerufen
 
@@ -286,9 +293,10 @@ teamSchadow.stream()
 // "DOMINIK", "SANDRO", "JOCHEN", ...
 ```
 
-- Manipulation von Elementen des Stream durch Function
-- Rückgabetyp der Function bestimmt Typ des anschießenden Streams
-- Single-Line-Statement => kein Return benötigt
+- Manipulation von Elementen des Stream durch `Function`
+- Rückgabetyp der `Function` bestimmt Typ des anschießenden Streams
+
+Note: Single-Line-Statement => kein Return benötigt
 
 
 ### filter() => n:m (m < n)
@@ -303,8 +311,8 @@ teamSchadow.stream()
 // "DOMINIK", ...
 ```
 
-- Return-Typ von Predicate ist boolean
-- filter() prüft, ob Predicate true zurückgibt
+- Return-Typ von `Predicate` ist boolean
+- filter() prüft, ob `Predicate` true zurückgibt
 - "true"-Elemente werden propagiert
 
 
@@ -374,7 +382,7 @@ Daher strecke ich auf mehrere Folien :-)
   - ...
 - Dezent komplexer in Möglichkeiten und Einarbeitung
 
-@Thomas: Am nächsten Entwicklertag Observer-Pattern?
+Note: @Thomas: Am nächsten Entwicklertag Observer-Pattern?
 
 
 ### und weitere
@@ -392,7 +400,6 @@ Daher strecke ich auf mehrere Folien :-)
 
 
 
-
 ## Umsetzung – Teil 3: Eigenen Code funktional zugänglich machen
 
 - Fluent API
@@ -401,15 +408,15 @@ Daher strecke ich auf mehrere Folien :-)
 - return Stream<T>
   - `public Collection<T> myMethod(param)` -> `public Stream<T> myMethod(param)`
   - `return collection;` -> `return collection.stream();`
-- Akzeptiere FunctionalInterfaces
-- Implementiere FuntionalInterfaces
+- Akzeptiere FunctionalInterfaces als Parameter
+- Implementiere FuntionalInterfaces und nutze die als Parameter
   - `someStream.map(this::myExtractedFunction)``
 - Implementiere Stream<T>
   - Von Einzelwerten: `static <T> Stream<T> of(T... values)`
   - Von anderen Streams (Arrays, Datei Input, ...)
-  - Infinit: Implementiere `Supplier<T>`
+  - Implementiere `Supplier<T>`, aus dem sich Stream erzeugen lässt
 
-=> Ausführliche Beispiele gingen hier zu weit. Daher Fokus auf Entwurfsmuster.
+=> Ausführliche Beispiele zu allen gingen hier zu weit. Daher Fokus auf einige Entwurfsmuster.
 
 
 
@@ -417,6 +424,8 @@ Daher strecke ich auf mehrere Folien :-)
 
 
 ### Delegates / Dependency Injection
+
+`assetSelector` implementiert FI `Predicate<T>`
 
 ```java
 public static int totalAssetValues(final List<Asset> assets, final Predicate<Asset> assetSelector) {
@@ -426,14 +435,14 @@ public static int totalAssetValues(final List<Asset> assets, final Predicate<Ass
         .sum();
 }
 
-// ...
-
 System.out.println("Total of all assets: " + totalAssetValues(assets, asset -> true));
 System.out.println("Total of bonds: " + totalAssetValues(assets, asset -> asset.getType() == AssetType.BOND));
 System.out.println("Total of stocks: " + totalAssetValues(assets, asset -> asset.getType() == AssetType.STOCK));
 ```
 
 Dependency Injection; macht auch testen einfacher (z. B. `asset -> throw new EnumConstantNotPresentException("damn");`)
+
+Note: Siehe auch den Punkt oben, FIs als Parameter zu akzeptieren.
 
 
 ### Decorator
@@ -567,7 +576,7 @@ myMethod(lightBoolean, heavy1(), heavy2());
 
 #### Lambdas
 
-Lambdas werden "vor Ort" ausgewertet, aber nicht aufgerufen-
+Lambdas werden "vor Ort" ausgewertet, aber nicht aufgerufen.
 
 ```java
 Supplier<Boolean> lightLambda1 = () -> heavy1();
@@ -613,7 +622,7 @@ final String firstNameWith3Letters = names.stream()
 
 
 
-# #ABER
+## ABER
 
 
 ### Probleme mir "reiner" FP in Java
