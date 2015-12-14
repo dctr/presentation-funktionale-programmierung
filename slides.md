@@ -3,17 +3,18 @@
 - Mit Java 8
 - Für Pragmatiker
 
-Note: Praxisorientiert, ohne mathematisches Fundament
+Note: Praxisorientiert, ohne mathematische Aspekte
 
 
 
-## Was ist FP?
+## FP Teaser
 
-Funktionale Programmierung - ein Teaser
+FP = Funktionale Programmierung
 
 Note:
-- Erfordert einige Grundlagen, deswegen "Motivation" erst später.
-- Wir erhalten das Mysterium.
+- Erfordert Grundlagen
+- "Motivation" später
+- Wir erhalten das Mysterium
 
 
 ### Imperative Programmierung
@@ -21,19 +22,19 @@ Note:
 - Beschreibe **wie** etwas getan werden muss
 - Schritt für Schritt Anleitung
 
-Note: Allgemein bekannt – hoffentlich
+Note: Allgemein bekannt - hoffentlich
 
 
 ### Funktionale Programmierung
 
 - Beschreibe **was** getan werden muss
-- Beschäftigt sich nicht mit dem "wie"
+- Beschäftigt sich nicht mit dem **wie**
 
 
 
-## Voraussetzung
+## Voraussetzungen
 
-Grundbaustein: Kapselung dieses *was*
+Grundbaustein: Kapselung dieses **was**
 
 **Das Command Pattern:** Kapselt Verhalten hinter Interface
 
@@ -76,7 +77,7 @@ executor.doSomeAction(new Command() {
 ```
 
 
-### TADA: Aufruf mit Lambda-Ausdruck
+### Aufruf mit Lambda-Ausdruck
 
 ```java
 executor.doSomeAction((Object param) -> {
@@ -84,10 +85,10 @@ executor.doSomeAction((Object param) -> {
 });
 ```
 
-Note: Nebenbei jetzt auch Lambdas erklärt, und das mit Absicht.
+Note: Nebenbei auch Lambdas erklärt, und das mit Absicht.
 
 
-### Kurzschreibweisen
+### Kurzschreibweisen für Lambdas
 
 ```java
 List<String> teamSchadow =
@@ -120,15 +121,15 @@ Note:
 - Wie auch bei anonymen Klassen in Variablen speicherbar
 
 
-## `@FunctionalInterface`
+### `@FunctionalInterface`
 
 - Lambda nur Kurzschreibweise für anonyme Klasse
 - FIs haben *eine* (abstrakte) Methode
-- Durch Interface automatische Typinferenz möglich
+- Dadurch automatische Typinferenz möglich
 
 Note:
 - Die Annotation von eben
-- Interfaces in Java 8 können default Methoden haben.
+- Interfaces in Java 8 können default Methoden haben
 
 
 ### Anwendungsfälle
@@ -138,15 +139,15 @@ Note:
 - ... u. v. m.
 - Coole Dinge in diesem Vortrag - aka FP
 
-Note: Callbacks für asynchrone Programmierung, s. auch mein Vert.X-Vortrag
+Note: Callbacks & asynchrone Programmierung, s. auch mein Vert.X-Vortrag
 
 
 
 ## Fragen soweit?
 
 - Command Pattern
+- Lambda-Ausdrücke
 - FunctionalInterface
-- Lambda
 
 Note:
 - Grundlagen sollten ab hier klar sein
@@ -165,6 +166,7 @@ Note: Ausblick, bevor wir zur "Motivation" kommen.
 - Unveränderbarkeit (Lambda-Scope geschlossen)
 - Keine Seiteneffekte (durch Unveränderbarkeit)
 - Funktionen höherer Ordnung
+- Lambda-Kalkül
 
 Note:
 - Ausdruck über Anweisung
@@ -234,14 +236,24 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 Note:
 - WAS filtern wir, bzw. WAS bilden wir ab
 - Nicht WIE (Iteration, Collections manipulieren)!
-- Auf Einzelelement-basis
+- Auf Einzelelement-Basis
 
 
 
-## Warum FP?
+## Motivation
+
+Warum funktionale Programmierung?
 
 
-### Nachteile imperativer Programmierung
+### Theoretische Vorteile von FP
+
+- Mathematische Beweisbarkeit von Korrektheit
+- ...
+
+Note: Blah, blah, blah ..., wir wollten Pragmatismus
+
+
+### Pragmatische Nachteile imperativer Programmierung
 
 - Vermischt das
   - *was* (Auszuführende Aktion, aka Command)
@@ -252,47 +264,38 @@ Note:
   - Parallelisierung (Threads starten, Synchronisation, ...)
 
 
-### Pragmatsche Vorteile von FP
+### Pragmatsche Vorteile von funktionaler Programmierung
 
 - Prägnant und Ausdrucksstark (Boilerplate unter der Haube)
 - Näher an natürlicher Sprache (intuitiver, lesbarer, wartbarer)
-- Inhärent parallelisierbar (da unter der Haube)
+- Inhärent parallelisierbar (wenn unter der Haube implementiert)
 - Weniger Fehleranfällig (weniger Code, keine Variablenmuation)
 
 
-### Theoretische Vorteile von FP
 
-- Mathematische Beweisbarkeit von Korrektheit
-- ...
+## Umsetzung - Teil 1
 
-Note: Blah, blah, blah ...
+Java Boardmittel (aka die Stream-API) & "Grundverben"
 
 
-
-## Umsetzung – Teil 1
-
-Java Boardmittel (aka Stream-API) & Grundverben
-
-
-### stream() => 1:n
+### stream() ⇒ 1:n
 
 `Stream<T> Collection<T>::stream()`
 
 ```java
 collection.stream()
-    .someAction(lambda);
+    .someAction(command);
 ```
 
-- Iterator-ähnliches FP-Pendant seit Java 8
-- Erzeugt einen "Strom" von Elementen
-- Vgl. `iterable.forEach(lambda)`
-- `lambda` wird für jedes Element ein Mal aufgerufen
+- Erzeugt "Strom" von Elementen
+- `someAction(command)` wird für jedes Element ein Mal aufgerufen
+- Vgl. Iterator: `iterable.forEach(command)`
 
 
 ### API
 
-- java.util.stream Interface `Stream<T>`: Streams stellen Grundverben bereit
-- java.util.function definiert `FunctionalInterface`s die von Grundverben entgegengenommen werden
+- java.util.stream definiert `Stream<T>`; Streams stellen "Grundverben" bereit
+- java.util.function definiert `FunctionalInterface`s die von "Grundverben" entgegengenommen werden
   - `Consumer<T>`: Represents an operation that accepts a single input argument and returns no result.
   - `Function<T,R>`: Represents a function that accepts one argument and produces a result.
   - ...
@@ -300,11 +303,11 @@ collection.stream()
 Note: Am Beispiel der neuen Stream API aus Java 8
 
 
-### Fluent-API
+### Fluent Interface
 
 - Rückgabewert der meisten Stream-Operationen wieder ein Stream
 - Aktionen manipulieren Stream
-- Bestimmen, was die nächste Aktion als Eingangs-Stream erhält
+- Bestimmen, was nächste Aktion als Eingangs-Stream erhält
 
 ```java
 collection.stream()
@@ -314,9 +317,9 @@ collection.stream()
 ```
 
 
-### map() => n:n
+### map() ⇒ n:n
 
-`<R> Stream<R> Stream<T>::map(Function<? super T, ? extends R> mapper)`
+`Stream<R> Stream<T>::map(Function<? super T, ? extends R> mapper)`
 
 ```java
 teamSchadow.stream()
@@ -328,10 +331,10 @@ teamSchadow.stream()
 - Manipulation von Elementen des Stream durch `Function`
 - Rückgabetyp der `Function` bestimmt Typ des anschießenden Streams
 
-Note: Single-Line-Statement => kein Return benötigt
+Note: Single-Line-Statement, kein Return benötigt
 
 
-### filter() => n:m (m < n)
+### filter() ⇒ n:m (m < n)
 
 `Stream<T> Stream<T>::filter(Predicate<? super T> predicate)`
 
@@ -348,7 +351,7 @@ teamSchadow.stream()
 - "true"-Elemente werden propagiert
 
 
-### reduce() / collect() => n:1
+### reduce() ⇒ n:1
 
 `T Stream<T>::reduce(T identity, BinaryOperator<T> accumulator)`
 
@@ -362,17 +365,17 @@ teamSchadow.stream()
 ```
 
 - BinaryOperator kombiniert Element mit Ergebnis der vorausgegangenen Operation
-- Initialer Wert sollte Identität sein (s. erster Parameter)
+- Initialer Wert i. d. R. Identität (s. erster Parameter)
 - Rückgabewert ist Element des Typs, kein Stream
 
+Note: String "", + 0, * 1, ...
 
-### Kollektoren
 
-Vorgefertigte Operationen für
+### collect() ⇒ n:1
 
 `R Stream<T>::collect(Collector<? super T,A,R> collector)`
 
-- In `java.util.stream.Collectors`
+- Vorgefertigte Kollektoren in java.util.stream.Collectors
 - Implementieren FI `Collector<T,A,R>`
 - sum, avg, join, toList, ...
 
@@ -388,30 +391,30 @@ In java.util.stream
 
 
 
-## Inhärente Parallelisierbarkeit
+### Inhärente Parallelisierbarkeit der Stream-API
 
 `streamParallel()` statt `stream()`, so einfach geht das.
 
 
-### Inhärente Parallelisierbarkeit II
+### Inhärente Parallelisierbarkeit!
 
 Die Einfachheit der Anpassung (und damit einhergehend die Folienanzahl) wird der Mächtigkeit kaum gerecht.
 
 
-### Inhärente Parallelisierbarkeit III
+### Inhärente Parallelisierbarkeit!!
 
 Daher strecke ich auf mehrere Folien :-)
 
 
 
-## Umsetzung – Teil 2
+## Umsetzung - Teil 2
 
 Bibliotheken & Sprachen
 
 
 ### Andere Java-APIs mit FP-API
 
-- java.util.Optional<T> (Javas halbherziger Versuch NPEs zu umschiffen)
+- `Optional<T>` (Javas halbherziger Versuch NPEs zu umschiffen)
 - ... ein paar andere
 
 Note: APIs die FIs entgegennehmen
@@ -426,68 +429,71 @@ Note: APIs die FIs entgegennehmen
   - join(), merge(), zip()
   - doOnNext(), doOnError(), doOnCompleted()
   - ...
-- Dezent komplexer in Möglichkeiten und Einarbeitung
+- Dezent komplexer in Möglichkeiten (und Einarbeitung)
 
 Note:
 - @Thomas: Am nächsten Entwicklertag Observer-Pattern?
 - Im Projekt beim Kunden erfolgreich im Einsatz
 
 
-### und weitere Bibliotheken
+### ... und weitere Bibliotheken
 
 - [Functional Java](http://www.functionaljava.org/) (viel Conveniece)
 - [Google Guava](https://github.com/google/guava) (auch mit Observer)
 - ...
 
 
-### Andere JVM-Sprachen
+### Andere (JVM-)Sprachen
 
-- [Clojure](http://clojure.org/) (Lisp-Dialekt; JVM, CLR, JS)
-- [Scala](http://www.scala-lang.org/) (nicht strikt-funktional, wie Java auch, aber "optimierter" für FP; JVM, JS)
+- [Clojure](http://clojure.org/)
+  - Lisp-Dialekt
+  - JVM, CLR, JS
+- [Scala](http://www.scala-lang.org/)
+  - Nicht strikt-funktional, wie Java auch
+  - Aber im Vgl. "optimierter" für FP
+  - JVM, JS
 - ...
 
 
 
-## Umsetzung – Teil 3
+## Umsetzung - Teil 3
 
 Eigenen Code funktional zugänglich machen
 
 
-### Denken in Streams und FIs
+### Denken in Streams und FIs I
 
 - Fluent API
   - `public void myMethod(param)` -> `public MyClass myMethod(param)`
   - `return this;`
-- return Stream<T>
-  - `public Collection<T> myMethod(param)` -> `public Stream<T> myMethod(param)`
-  - `return collection;` -> `return collection.stream();`
+- `return Stream<T>`
+  - `return collection.stream();`
+  - `return Stream<T>.of(T... values)`
 
 
 ### Denken in Streams und FIs II
 
-- Akzeptiere FunctionalInterfaces als Parameter
-- Implementiere FuntionalInterfaces und nutze die als Parameter
+- Akzeptiere *higher order functions* als Parameter
+- Implementiere FuntionalInterfaces und nutze sie als Parameter
   - `someStream.map(this::myExtractedFunction)``
-- Implementiere Stream<T>
-  - Von Einzelwerten: `static <T> Stream<T> of(T... values)`
+- Erzeuge Streams
   - Von anderen Streams (Arrays, Datei Input, ...)
   - Implementiere `Supplier<T>`, aus dem sich Stream erzeugen lässt
 
 
 ### Denken in Streams und FIs III
 
-Ausführliche Beispiele zu allen gingen hier zu weit. Daher Fokus auf einige Entwurfsmuster.
+- Ausführliche Beispiele würden Rahmen sprengen
+- Fokus im Folgenden auf einigen Entwurfsmustern
 
 
 
-## Umsetzung – Teil 4
+## Umsetzung - Teil 4
 
 Funktionale Entwurfsmuster
 
 
 ### Delegates / Dependency Injection
-
-`assetSelector` implementiert FI `Predicate<T>`
 
 ```java
 public static int totalAssetValues(final List<Asset> assets,
@@ -506,9 +512,11 @@ System.out.println("Total of stocks: " + totalAssetValues(assets,
     asset -> asset.getType() == AssetType.STOCK));
 ```
 
-Dependency Injection; macht auch testen einfacher (z. B. `asset -> throw new EnumConstantNotPresentException("damn");`)
+Macht auch testen einfacher (z. B. `asset -> throw new EnumConstantNotPresentException("damn");`)
 
-Note: Siehe auch den Punkt oben, FIs als Parameter zu akzeptieren.
+Note:
+- Dependency hier assetSelector
+- Siehe auch Punkt oben "FIs als Parameter akzeptieren"
 
 
 ### Decorator
@@ -614,7 +622,7 @@ FluentMailer.send(mailer ->
 
 #### Vorteile des "Execute Around Method"-Pattern
 
-- Fluent => Keine Wiederholung von `mailer.*`
+- Fluent ⇒ Keine Wiederholung von `mailer.*`
 - Gekapselter Scope & Lifetime
   - wäre es im 1. Bsp erlaubt, mailer zu speichern und send() mehrfach aufzurufen?
   - kein Zugriff auf mailer nach send()
@@ -623,11 +631,13 @@ FluentMailer.send(mailer ->
   - Spart Boilerplate try/finally-Blöcke
   - Beugt vergessen dieses Boilerplate-Codes vor
 
+Note: Im FP-Beispiel wird die mailer-Resource von send() gemananaget
+
 
 ### Lazy Evaluation
 
-- Kostspielige Operationen sollten nur ausgeführt werden wenn nötig.
-- Eventuell entscheidet eine leichtgewichtige Vorbedingung, ob eine kostspielige Operation ausgeführt wird.
+- Kostspielige Operationen sollten nur ausgeführt werden wenn nötig
+- Eventuell entscheidet eine leichtgewichtige Vorbedingung
 
 ```java
 lightBoolean && heavy1() && heavy2()
@@ -643,7 +653,7 @@ myMethod(lightBoolean, heavy1(), heavy2());
 
 #### 1. Auswertung aufschieben
 
-Lambdas werden "vor Ort" ausgewertet, aber nicht aufgerufen.
+Lambdas werden "vor Ort" ausgewertet, aber nicht aufgerufen
 
 ```java
 Supplier<Boolean> lightLambda1 = () -> heavy1();
@@ -667,7 +677,7 @@ final String firstNameWith3Letters = names.stream()
     .get();
 ```
 
-Ausgabe bei `System.out.println`s?
+Was wäre Log-Ausgabe der Lambdas?
 
 
 #### Internmediate VS terminal
@@ -695,22 +705,26 @@ Note: Reduce fragt natürlich ab bis Ende
 
 Nicht 100%-ig umgesetzt bzw. überhaupt umsetzbar
 
-- Dinge fehlen, nur grundlegende FP-Konzepte umgesetzt
-- Mischbetrieb mit OOP erlaubt "aufbrechen" des Konzepts (z. B. in Lambdas auf Variablen außerhalb zugreifen => Seiteneffekt => keine "Pure Function")
+- Dinge fehlen
+- Mischbetrieb mit OOP
+  - Erlaubt Seiteneffekte (Lambdas können z. B. aüßere Variablen zugreifen)
+  - Mischbetrieb kann Code noch unübersichtlicher machen als vorher
 - FP ist in, daher muss Java es können...
 
-Man kann an FP "vorbeiprogrammieren", die Konzepte mischen und so noch unübersichtlicheren Code erzeugen als vorher
+Note: keine sog. "Pure Function"s
 
 
 ### Performance
 
-- Nicht ganz so performant wie "echte" FP-Sprachen
+- Nicht so performant wie "echte" FP-Sprachen
 - Lambdas sind implizit anonyme Klassen
+
+Note: Da Java stark auf sein Typsystem ausgerichtet ist.
 
 
 ### Randnotizen
 
-- Effective final (was von außen in einem Lambda-Ausdruck verwendet wird, ist `final`)
+- Effective final (was von außen in Lambda verwendet wird, wird `final`)
 - Keine checked Exceptions in Lambdas (FIs haben keine throws-Klausel)
   - `throw new RuntimeException(e)` evtl. problematisch bei paralleler Ausführung
   - Komplexe Thematik, übersteigt diesen Vortrag
@@ -720,10 +734,7 @@ Man kann an FP "vorbeiprogrammieren", die Konzepte mischen und so noch unübersi
 
 ## Fazit
 
-Nichtsdestotrotz
-
-
-### Sehr hilfreich für den Alltag!
+Nichtsdestotrotz sehr hilfreich für den Alltag!
 
 - Lesbarkeit
 - Parallelisierbarkeit
