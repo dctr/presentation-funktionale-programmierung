@@ -390,7 +390,6 @@ In java.util.stream
 - ...
 
 
-
 ### Inhärente Parallelisierbarkeit der Stream-API
 
 `streamParallel()` statt `stream()`, so einfach geht das.
