@@ -600,9 +600,9 @@ private FluentMailer() {}
     public FluentMailer to(final String address) { /*... */; return this; }
     public FluentMailer subject(final String line) { /*... */; return this; }
     public FluentMailer body(final String message) { /*... */; return this; }
-    public static void send(final Consumer<FluentMailer> block) {
+    public static void send(final Consumer<FluentMailer> mailerConsumer) {
         final FluentMailer mailer = new FluentMailer();
-        block.accept(mailer);
+        mailerConsumer.accept(mailer);
         mailer.privateValidate();
         mailer.privateSend();
     }
@@ -618,6 +618,11 @@ FluentMailer.send(mailer ->
         .body("...much better..."));
 ```
 
+Note:
+- Fluent (return this)
+- send() aktzeptiert FI
+- send() managed mailer
+
 
 #### Vorteile des "Execute Around Method"-Pattern
 
@@ -629,8 +634,6 @@ FluentMailer.send(mailer ->
   - Spart Boilerplate-Aufräum-Code
   - Spart Boilerplate try/finally-Blöcke
   - Beugt vergessen dieses Boilerplate-Codes vor
-
-Note: Im FP-Beispiel wird die mailer-Resource von send() gemananaget
 
 
 ### Lazy Evaluation
