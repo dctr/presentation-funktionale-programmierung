@@ -50,7 +50,7 @@ public interface Command {
 }
 ```
 
-(Annotaion erstmal ignorieren)
+(Annotation erstmal ignorieren)
 
 
 ### Aufruf mit dedizierter Klasse
@@ -155,9 +155,7 @@ Note:
 
 
 
-## FP Trailer
-
-Note: Ausblick, bevor wir zur "Motivation" kommen.
+## Motivation
 
 
 ### FP Theorie
@@ -174,6 +172,14 @@ Note:
 - Funktionen nehmen Funktionen entgegen, s. auch Command
 
 
+### Theoretische Vorteile von FP
+
+- Mathematische Beweisbarkeit von Korrektheit
+- ...
+
+Note: Blah, blah, blah ..., wir wollten Pragmatismus
+
+
 ### Vom Command Pattern zu FP
 
 > ... und jetzt nochmal für Pragmatiker, bitte!
@@ -181,7 +187,7 @@ Note:
 **Beispiel:** Summiere Preise über 20 EUR, ermäßigt um 10 %
 
 
-#### Stufe 1 - Wie in alten Tagen
+#### Wie in alten Tagen
 
 ```java
 Collection<BigDecimal> prices = MyApi.getPrices();
@@ -202,7 +208,7 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
 
-#### Stufe 2 - Syntaktischer Zucker
+#### NUR Syntaktischer Zucker
 
 ```java
 Collection<BigDecimal> prices = MyApi.getPrices();
@@ -221,7 +227,18 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 Note: Erlaubt kompaktere Syntax, Denk- und Funktionsweise ist aber gleich.
 
 
-#### Stufe 3 - Eine neue Welt
+### Nachteile imperativer Programmierung
+
+- Vermischt das
+  - *was* (Auszuführende Aktion, aka Command / Logik)
+  - mit dem *wie* (iterieren, verzweigen, ...)
+- Redundanter, manuell erstellter Code (lies: Fehler)
+  - Boilerplate-Code (Deklaration von Command-Klassen)
+  - Low-Level Code (Verzweigungen, Schleifen, ...)
+  - Parallelisierung (Threads starten, Synchronisation, ...)
+
+
+#### Eine neue Welt
 
 ```java
 final BigDecimal totalOfDiscountedPrices = MyApi
@@ -239,43 +256,26 @@ Note:
 - Auf Einzelelement-Basis
 
 
+### Vorteile von funktionaler Programmierung
 
-## Motivation
+- Prägnant und Ausdrucksstark
+- Näher an natürlicher Sprache
+- Inhärent parallelisierbar
+- Weniger Fehleranfällig
 
-Warum funktionale Programmierung?
+⇒ wartbarer
 
-
-### Theoretische Vorteile von FP
-
-- Mathematische Beweisbarkeit von Korrektheit
-- ...
-
-Note: Blah, blah, blah ..., wir wollten Pragmatismus
-
-
-### Pragmatische Nachteile imperativer Programmierung
-
-- Vermischt das
-  - *was* (Auszuführende Aktion, aka Command)
-  - mit dem *wie* (iterieren, ...)
-- Redundanter, manuell erstellter Code (lies: Fehler)
-  - Boilerplate-Code (Deklaration von Command-Klassen)
-  - Low-Level Code (Verzweigungen, Schleifen, ...)
-  - Parallelisierung (Threads starten, Synchronisation, ...)
-
-
-### Pragmatsche Vorteile von funktionaler Programmierung
-
-- Prägnant und Ausdrucksstark (Boilerplate unter der Haube)
-- Näher an natürlicher Sprache (intuitiver, lesbarer, wartbarer)
-- Inhärent parallelisierbar (wenn unter der Haube implementiert)
-- Weniger Fehleranfällig (weniger Code, keine Variablenmuation)
-
+Note:
+- *Wie* unter der Haube gekapselt in Verben (filter, map, reduce)
+- *Was* = Commands
+- NatSpr: intuitiver, lesbarer, wartbarer (gewöhnungsbedürftig, wie OO auch)
+- Parallelisierbar wenn unter der Haube
+- Fehleranfälligkeit: weniger Code, keine Variablenmuation
 
 
 ## Umsetzung - Teil 1
 
-Java Boardmittel (aka die Stream-API) & "Grundverben"
+Java Boardmittel (aka die Stream-API) & die "Grundverben"
 
 
 ### stream() ⇒ 1:n
@@ -294,27 +294,18 @@ collection.stream()
 
 ### API
 
-- java.util.stream definiert `Stream<T>`; Streams stellen "Grundverben" bereit
-- java.util.function definiert `FunctionalInterface`s die von "Grundverben" entgegengenommen werden
-  - `Consumer<T>`: Represents an operation that accepts a single input argument and returns no result.
-  - `Function<T,R>`: Represents a function that accepts one argument and produces a result.
+- java.util.stream definiert `Stream<T>`
+- java.util.function definiert `FunctionalInterface`s
+  - `R Function<T,R>::apply(T t)`
+  - `boolean Predicate<T>::test(T t)`
+  - `void Consumer<T>::accept(T t)`
+  - `T Supplier<T>::get()`
   - ...
 
-Note: Am Beispiel der neuen Stream API aus Java 8
-
-
-### Fluent Interface
-
-- Rückgabewert der meisten Stream-Operationen wieder ein Stream
-- Aktionen manipulieren Stream
-- Bestimmen, was nächste Aktion als Eingangs-Stream erhält
-
-```java
-collection.stream()
-    .someAction(lambda1) // Receives all items of collection
-    .otherAction(lambda2) // Receives items emitted by someAction()
-    .furtherAction(lambda3); // Receives items emitted by otherAction()
-```
+Note:
+- Am Beispiel der neuen Stream API aus Java 8
+- Streams stellen "Grundverben" bereit
+- FIs werden von "Grundverben" entgegengenommen
 
 
 ### map() ⇒ n:n
@@ -350,6 +341,8 @@ teamSchadow.stream()
 - filter() prüft, ob `Predicate` true zurückgibt
 - "true"-Elemente werden propagiert
 
+Note: Fluent Interface
+
 
 ### reduce() ⇒ n:1
 
@@ -369,15 +362,6 @@ teamSchadow.stream()
 - Rückgabewert ist Element des Typs, kein Stream
 
 Note: String "", + 0, * 1, ...
-
-
-### collect() ⇒ n:1
-
-`R Stream<T>::collect(Collector<? super T,A,R> collector)`
-
-- Vorgefertigte Kollektoren in java.util.stream.Collectors
-- Implementieren FI `Collector<T,A,R>`
-- sum, avg, join, toList, ...
 
 
 ### ... und viele mehr
@@ -492,7 +476,7 @@ Eigenen Code funktional zugänglich machen
 Funktionale Entwurfsmuster
 
 
-### Delegates / Dependency Injection
+### Dependency Injection
 
 ```java
 public static int totalAssetValues(final List<Asset> assets,
@@ -521,49 +505,43 @@ Note:
 ### Decorator
 
 
-#### Ausgangsklasse
+#### Ausgangssituation
 
 ```java
-public class Camera {
-    private Function<Color, Color> filter;
+public class MyClass<T, R> {
+    private Function<T, R> func;
 
-    public Camera() {
-        this.filter = Function::identity;
+    public MyClass(Function<T, R> func) {
+        this.func = func;
     }
 
-    public Camera(Function<Color, Color> filter) {
-        this.filter = filter;
-    }
-
-    public Color capture(final Color inputColor) {
-        return filter.apply(inputColor);
-    }
+    // ...
 }
 ```
 
-Note: Wichtiger Teil: Nimmt **einen** Filter entgegen
+Note: Wichtiger Teil: Nimmt **eine** Funktion entgegen
 
 
 #### Decorator für Multi-Filter - klassisch
 
-- Ableitung mit Überladung: `public Color capture(final Color... inputColors)`?
+- Ableitung mit Überladung: `public MyClass(Function<T, R>... funcs)`?
 > Composition over Inheritance
 
-- Wrapper-Klasse die Camera-Instanz entgegennimmt?
+- Wrapper-Klasse die MyClass-Instanz entgegennimmt?
 > Forwarding Boilerplate
 
 
 #### Decorator für Multi-Filter - FP-Kompositionen
 
 ```java
-Function<Color, Color> myFilters =
-    Filters::brigther.compose(Filters::sepia)
-Camera multiFilterCamera = new Camera(myFilters);
+Function<T, R> funcs =
+    func1.compose(func2)
+MyClass instance = new MyClass(funcs);
 ```
 
-- Consumer<T>: andThen(...)
 - Function<T,R>: andThen(...), compose(...)
 - Predicate<T>: and(...), or(...), negate()
+- Consumer<T>: andThen(...)
 
 
 ### Execute Around Method
@@ -665,7 +643,7 @@ myMethod(lightBoolean, lightLambda1, lightLambda2);
 ```
 
 
-#### 2. Steam<T> ist inhärent faul
+#### 2. Stream<T> ist inhärent faul
 
 ```java
 List<String> names = Arrays.asList("Brad", "Kate", "Kim",
