@@ -458,7 +458,7 @@ Eigenen Code funktional zugänglich machen
 
 - Akzeptiere *higher order functions* als Parameter
 - Implementiere FuntionalInterfaces und nutze sie als Parameter
-  - `someStream.map(this::myExtractedFunction)``
+  - `someStream.map(this::myExtractedFunction)`
 - Erzeuge Streams
   - Von anderen Streams (Arrays, Datei Input, ...)
   - Implementiere `Supplier<T>`, aus dem sich Stream erzeugen lässt
