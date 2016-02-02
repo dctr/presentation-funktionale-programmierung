@@ -17,6 +17,11 @@ Note:
 - Wir erhalten das Mysterium
 
 
+### Praxis-geprüft
+
+Beim Kunden im Einsatz, weil ...
+
+
 ### Imperative Programmierung
 
 - Beschreibe **wie** etwas getan werden muss
@@ -29,6 +34,9 @@ Note: Allgemein bekannt - hoffentlich
 
 - Beschreibe **was** getan werden muss
 - Beschäftigt sich nicht mit dem **wie**
+- Nutzt Funktionen höherer Ordnung
+
+Note: Fkt. höherer Ordnung = Fkt. die Fkt. engegennehmen
 
 
 
@@ -50,7 +58,7 @@ public interface Command {
 }
 ```
 
-(Annotation erstmal ignorieren)
+Note: Annotation erstmal ignorieren
 
 
 ### Aufruf mit dedizierter Klasse
@@ -80,7 +88,7 @@ executor.doSomeAction(new Command() {
 ### Aufruf mit Lambda-Ausdruck
 
 ```java
-executor.doSomeAction((Object param) -> {
+executor.doSomeAction(param -> {
     // Do something meaningful.
 });
 ```
@@ -123,13 +131,11 @@ Note:
 
 ### `@FunctionalInterface`
 
-- Lambda nur Kurzschreibweise für anonyme Klasse
 - FIs haben *eine* (abstrakte) Methode
 - Dadurch automatische Typinferenz möglich
+- Lambda nur Kurzschreibweise für anonyme Klasse
 
-Note:
-- Die Annotation von eben
-- Interfaces in Java 8 können default Methoden haben
+Note: Die Annotation von eben
 
 
 ### Anwendungsfälle
@@ -158,29 +164,15 @@ Note:
 ## Motivation
 
 
-### FP Theorie
-
-- Deklarativ (*was* statt *wie*)
-- Unveränderbarkeit (Lambda-Scope geschlossen)
-- Keine Seiteneffekte (durch Unveränderbarkeit)
-- Funktionen höherer Ordnung
-- Lambda-Kalkül
-
-Note:
-- Ausdruck über Anweisung
-- keine Mutation externer Variablen, in Java nicht umgesetzt, siehe später
-- Funktionen nehmen Funktionen entgegen, s. auch Command
-
-
 ### Theoretische Vorteile von FP
 
+- Lambda-Kalkül
 - Mathematische Beweisbarkeit von Korrektheit
-- ...
 
-Note: Blah, blah, blah ..., wir wollten Pragmatismus
+Note: ..., aber wir wollten Pragmatismus
 
 
-### Vom Command Pattern zu FP
+### Überleitung zu FP
 
 > ... und jetzt nochmal für Pragmatiker, bitte!
 
@@ -224,7 +216,7 @@ for (BigDecimal price : prices) {
 System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
-Note: Erlaubt kompaktere Syntax, Denk- und Funktionsweise ist aber gleich.
+Note: Erlaubt kompaktere Syntax, Funktions- und vor allem Denkweise ist aber gleich.
 
 
 ### Nachteile imperativer Programmierung
@@ -251,45 +243,30 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
 Note:
-- WAS filtern wir, bzw. WAS bilden wir ab
-- Nicht WIE (Iteration, Collections manipulieren)!
-- Auf Einzelelement-Basis
+- WAS filtern wir, bzw. WAS bilden wir ab = Commands
+- Kein WIE (Iteration, Collections manipulieren)!
+- WIE unter der Haube gekapselt in Verben (filter, map, reduce)
+- WAS auf Einzelelement-Basis definiert
 
 
-### Vorteile von funktionaler Programmierung
+### Praktische Vorteile von FP
 
-- Prägnant und Ausdrucksstark
-- Näher an natürlicher Sprache
-- Inhärent parallelisierbar
-- Weniger Fehleranfällig
+- Unveränderbarkeit (Lambda-Scope geschlossen)
+- Keine Seiteneffekte (durch Unveränderbarkeit)
+- Prägnant, ausdrucksstark, näher an natürlicher Sprache
+- Weniger Fehleranfällig (da weniger Code)
 
 ⇒ wartbarer
 
 Note:
-- *Wie* unter der Haube gekapselt in Verben (filter, map, reduce)
-- *Was* = Commands
-- NatSpr: intuitiver, lesbarer, wartbarer (gewöhnungsbedürftig, wie OO auch)
-- Parallelisierbar wenn unter der Haube
-- Fehleranfälligkeit: weniger Code, keine Variablenmuation
+- geschlossener Scope in Java nicht umgesetzt, siehe später
+- NatSpr + intuitiver (gewöhnungsbedürftig, wie OO auch)
+- Fehleranfälligkeit: weniger Code, (keine Variablenmuation)
 
 
 ## Umsetzung - Teil 1
 
 Java Boardmittel (aka die Stream-API) & die "Grundverben"
-
-
-### stream() ⇒ 1:n
-
-`Stream<T> Collection<T>::stream()`
-
-```java
-collection.stream()
-    .someAction(command);
-```
-
-- Erzeugt "Strom" von Elementen
-- `someAction(command)` wird für jedes Element ein Mal aufgerufen
-- Vgl. Iterator: `iterable.forEach(command)`
 
 
 ### API
@@ -306,6 +283,21 @@ Note:
 - Am Beispiel der neuen Stream API aus Java 8
 - Streams stellen "Grundverben" bereit
 - FIs werden von "Grundverben" entgegengenommen
+- FIs = Commands
+
+
+### stream() ⇒ 1:n
+
+`Stream<T> Collection<T>::stream()`
+
+```java
+collection.stream()
+    .someFpVerb(command);
+```
+
+- Erzeugt "Strom" von Elementen
+- `someFpVerb(command)` wird für jedes Element ein Mal aufgerufen
+- Vgl. Iterator: `iterable.forEach(command)`
 
 
 ### map() ⇒ n:n
@@ -314,7 +306,7 @@ Note:
 
 ```java
 teamSchadow.stream()
-    .map(name -> name.toUpperCase);
+    .map((String name) -> name.toUpperCase());
 
 // "DOMINIK", "SANDRO", "JOCHEN", ...
 ```
@@ -332,14 +324,14 @@ Note: Single-Line-Statement, kein Return benötigt
 ```java
 teamSchadow.stream()
     .filter(name -> name.startsWith("D"))
-    .map(name -> name.toUpperCase);
+    .map(String::toUpperCase);
 
 // "DOMINIK", ...
 ```
 
 - Return-Typ von `Predicate` ist boolean
 - filter() prüft, ob `Predicate` true zurückgibt
-- "true"-Elemente werden propagiert
+- Nur "true"-Elemente werden propagiert
 
 Note: Fluent Interface
 
@@ -351,7 +343,7 @@ Note: Fluent Interface
 ```java
 teamSchadow.stream()
     .reduce("", (collector, name) -> {
-        return String.join(", ", collector, name)
+        return collector + ", " + name;
     });
 
 // "Dominik, Sandro, Jochen, ..."
@@ -359,7 +351,7 @@ teamSchadow.stream()
 
 - BinaryOperator kombiniert Element mit Ergebnis der vorausgegangenen Operation
 - Initialer Wert i. d. R. Identität (s. erster Parameter)
-- Rückgabewert ist Element des Typs, kein Stream
+- Rückgabewert ist Element des Typs, kein Stream!
 
 Note: String "", + 0, * 1, ...
 
@@ -378,6 +370,8 @@ In java.util.stream
 
 `streamParallel()` statt `stream()`, so einfach geht das.
 
+Note: WIE unter der Haube, Threading ist auch so ein WIE
+
 
 ### Inhärente Parallelisierbarkeit!
 
@@ -386,19 +380,23 @@ Die Einfachheit der Anpassung (und damit einhergehend die Folienanzahl) wird der
 
 ### Inhärente Parallelisierbarkeit!!
 
-Daher strecke ich auf mehrere Folien :-)
+Daher strecke ich auf drei Folien :-)
 
 
 
 ## Umsetzung - Teil 2
 
-Bibliotheken & Sprachen
+Bibliotheken, Frameworks & Sprachen
 
 
-### Andere Java-APIs mit FP-API
+### Andere Java-APIs und Framkeworks
 
 - `Optional<T>` (Javas halbherziger Versuch NPEs zu umschiffen)
-- ... ein paar andere
+- ... und ein paar andere
+
+- [Functional Java](http://www.functionaljava.org/) (viel Conveniece)
+- [Google Guava](https://github.com/google/guava) (mit Observer-Pattern)
+- ...
 
 Note: APIs die FIs entgegennehmen
 
@@ -407,7 +405,7 @@ Note: APIs die FIs entgegennehmen
 
 > ReactiveX is a combination of the best ideas from the Observer pattern, the Iterator pattern, and functional programming.
 
-- Bekannt, verbreitet und mächtig
+- Bekannt, verbreitet, mächtig
 - Umfangreicher als java.util.stream
   - join(), merge(), zip()
   - doOnNext(), doOnError(), doOnCompleted()
@@ -417,13 +415,6 @@ Note: APIs die FIs entgegennehmen
 Note:
 - @Thomas: Am nächsten Entwicklertag Observer-Pattern?
 - Im Projekt beim Kunden erfolgreich im Einsatz
-
-
-### ... und weitere Bibliotheken
-
-- [Functional Java](http://www.functionaljava.org/) (viel Conveniece)
-- [Google Guava](https://github.com/google/guava) (auch mit Observer)
-- ...
 
 
 ### Andere (JVM-)Sprachen
@@ -444,28 +435,14 @@ Note:
 Eigenen Code funktional zugänglich machen
 
 
-### Denken in Streams und FIs I
+### Denken und programmieren in Streams und FIs
 
-- Fluent API
-  - `public void myMethod(param)` -> `public MyClass myMethod(param)`
-  - `return this;`
-- `return Stream<T>`
-  - `return collection.stream();`
-  - `return Stream<T>.of(T... values)`
+- Fluent API anbieten
+- `Stream<T>`s erzeugen / zurückgeben
+- *Higher order functions* als Parameter akzeptieren
+- `FuntionalInterface`s implementieren (um als Parameter genutzt werden zu können)
 
-
-### Denken in Streams und FIs II
-
-- Akzeptiere *higher order functions* als Parameter
-- Implementiere FuntionalInterfaces und nutze sie als Parameter
-  - `someStream.map(this::myExtractedFunction)`
-- Erzeuge Streams
-  - Von anderen Streams (Arrays, Datei Input, ...)
-  - Implementiere `Supplier<T>`, aus dem sich Stream erzeugen lässt
-
-
-### Denken in Streams und FIs III
-
+Note:
 - Ausführliche Beispiele würden Rahmen sprengen
 - Fokus im Folgenden auf einigen Entwurfsmustern
 
@@ -495,59 +472,17 @@ System.out.println("Total of stocks: " + totalAssetValues(assets,
     asset -> asset.getType() == AssetType.STOCK));
 ```
 
-Macht auch testen einfacher (z. B. `asset -> throw new EnumConstantNotPresentException("damn");`)
+Macht auch testen einfacher (z. B. `asset -> throw new EnumConstantNotPresentException("on purpose");`)
 
 Note:
 - Dependency hier assetSelector
 - Siehe auch Punkt oben "FIs als Parameter akzeptieren"
 
 
-### Decorator
-
-
-#### Ausgangssituation
-
-```java
-public class MyClass<T, R> {
-    private Function<T, R> func;
-
-    public MyClass(Function<T, R> func) {
-        this.func = func;
-    }
-
-    // ...
-}
-```
-
-Note: Wichtiger Teil: Nimmt **eine** Funktion entgegen
-
-
-#### Decorator für Multi-Filter - klassisch
-
-- Ableitung mit Überladung: `public MyClass(Function<T, R>... funcs)`?
-> Composition over Inheritance
-
-- Wrapper-Klasse die MyClass-Instanz entgegennimmt?
-> Forwarding Boilerplate
-
-
-#### Decorator für Multi-Filter - FP-Kompositionen
-
-```java
-Function<T, R> funcs =
-    func1.compose(func2)
-MyClass instance = new MyClass(funcs);
-```
-
-- Function<T,R>: andThen(...), compose(...)
-- Predicate<T>: and(...), or(...), negate()
-- Consumer<T>: andThen(...)
-
-
 ### Execute Around Method
 
 
-#### Klassisch
+#### 1. Klassisch
 
 ```java
 public class Mailer {
@@ -569,7 +504,7 @@ mailer.send();
 ```
 
 
-#### Funktional
+#### 2. Funktional
 
 ```java
 public class FluentMailer {
@@ -588,12 +523,11 @@ private FluentMailer() {}
 ```
 
 ```java
-FluentMailer.send(mailer ->
-    mailer
-        .from("build@agiledeveloper.com")
-        .to("venkats@agiledeveloper.com")
-        .subject("build notification")
-        .body("...much better..."));
+FluentMailer.send(mailer -> mailer
+    .from("build@agiledeveloper.com")
+    .to("venkats@agiledeveloper.com")
+    .subject("build notification")
+    .body("...much better..."));
 ```
 
 Note:
@@ -606,8 +540,8 @@ Note:
 
 - Fluent ⇒ Keine Wiederholung von `mailer.*`
 - Gekapselter Scope & Lifetime
-  - wäre es im 1. Bsp erlaubt, mailer zu speichern und send() mehrfach aufzurufen?
-  - kein Zugriff auf mailer nach send()
+  - wäre es in 1. erlaubt, mailer zu speichern und send() mehrfach aufzurufen?
+  - kein Zugriff auf mailer nach send() in 2.
 - Auch gut zum Resourcen-Management (DB-Verbindung oder Dateien öffnen und schließen, Lock-Verwaltung, Exception-Handling, etc.)
   - Spart Boilerplate-Aufräum-Code
   - Spart Boilerplate try/finally-Blöcke
@@ -618,6 +552,9 @@ Note:
 
 - Kostspielige Operationen sollten nur ausgeführt werden wenn nötig
 - Eventuell entscheidet eine leichtgewichtige Vorbedingung
+
+
+#### 1. JVM-funktionsweise ausnutzen
 
 ```java
 lightBoolean && heavy1() && heavy2()
@@ -631,7 +568,7 @@ myMethod(lightBoolean, heavy1(), heavy2());
 ```
 
 
-#### 1. Auswertung aufschieben
+#### 1. Auswertung in Lambdas kapseln
 
 Lambdas werden "vor Ort" ausgewertet, aber nicht aufgerufen
 
@@ -660,7 +597,7 @@ final String firstNameWith3Letters = names.stream()
 Was wäre Log-Ausgabe der Lambdas?
 
 
-#### Internmediate VS terminal
+#### 2. Intermediate VS terminal
 
 ```
 getting length for "Brad"
@@ -674,24 +611,30 @@ KIM
 - Terminals (findFirst(), reduce(), ...) fragen nur so viele Elemente an, wie benötigt
 - Erlaubt effizienten Umgang mit **infiniten** Streams (z. B. `Stream<Integer> pimeNumbers`)
 
-Note: Reduce fragt natürlich ab bis Ende
+Note:
+- Reduce fragt natürlich ab bis Ende
+- Terminals sind idR die, die keinen Stream<T> zurückgeben, sondern T
 
 
 
 ## ABER
 
 
-### Probleme mir "reiner" FP in Java
+### Probleme mit "reiner" FP in Java
 
 Nicht 100%-ig umgesetzt bzw. überhaupt umsetzbar
 
 - Dinge fehlen
-- Mischbetrieb mit OOP
-  - Erlaubt Seiteneffekte (Lambdas können z. B. aüßere Variablen zugreifen)
-  - Mischbetrieb kann Code noch unübersichtlicher machen als vorher
-- FP ist in, daher muss Java es können...
+- Lambda-Scope nicht geschlossen
+- Mischbetrieb mit OOP möglich
+- ...
 
-Note: keine sog. "Pure Function"s
+⇒
+
+- Erlaubt Seiteneffekte (Lambdas können z. B. aüßere Variablen zugreifen)
+- Kann Code unübersichtlicher machen als vorher
+
+Aber FP ist in, daher muss Java es können...
 
 
 ### Performance
@@ -702,20 +645,12 @@ Note: keine sog. "Pure Function"s
 Note: Da Java stark auf sein Typsystem ausgerichtet ist.
 
 
-### Randnotizen
-
-- Effective final (was von außen in Lambda verwendet wird, wird `final`)
-- Keine checked Exceptions in Lambdas (FIs haben keine throws-Klausel)
-  - `throw new RuntimeException(e)` evtl. problematisch bei paralleler Ausführung
-  - Komplexe Thematik, übersteigt diesen Vortrag
-  - ReactiveX hat einen Mechanismus dafür
-
-
 
 ## Fazit
 
 Nichtsdestotrotz sehr hilfreich für den Alltag!
 
+- Denkweise schnell eingängig und angenehm
 - Lesbarkeit
 - Parallelisierbarkeit
 - Vorbereitung auf andere Sprachen
