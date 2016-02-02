@@ -637,7 +637,7 @@ Nicht 100%-ig umgesetzt bzw. überhaupt umsetzbar
 Aber FP ist in, daher muss Java es können...
 
 
-### Performance
+### Performance in Java
 
 - Nicht so performant wie "echte" FP-Sprachen
 - Lambdas sind implizit anonyme Klassen
@@ -650,7 +650,7 @@ Note: Da Java stark auf sein Typsystem ausgerichtet ist.
 
 Nichtsdestotrotz sehr hilfreich für den Alltag!
 
-- Denkweise schnell eingängig und angenehm
+- Denkweise (subjektiv) eingängig und angenehm
 - Lesbarkeit
 - Parallelisierbarkeit
 - Vorbereitung auf andere Sprachen
