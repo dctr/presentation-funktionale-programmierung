@@ -14,12 +14,8 @@ FP = Funktionale Programmierung
 Note:
 - Erfordert Grundlagen
 - "Motivation" später
+- Jetzt nur Teaser
 - Wir erhalten das Mysterium
-
-
-### Praxis-geprüft
-
-Beim Kunden im Einsatz, weil ...
 
 
 ### Imperative Programmierung
@@ -36,7 +32,9 @@ Note: Allgemein bekannt - hoffentlich
 - Beschäftigt sich nicht mit dem **wie**
 - Nutzt Funktionen höherer Ordnung
 
-Note: Fkt. höherer Ordnung = Fkt. die Fkt. engegennehmen
+Note:
+- Fkt. höherer Ordnung = Fkt. die Fkt. engegennehmen
+- Callbacks, Delegates
 
 
 
@@ -44,9 +42,13 @@ Note: Fkt. höherer Ordnung = Fkt. die Fkt. engegennehmen
 
 Grundbaustein: Kapselung dieses **was**
 
-**Das Command Pattern:** Kapselt Verhalten hinter Interface
+**Das Command Pattern**
 
-Note: Wie eben im Vortrag von Thomas gehört
+Note:
+- Wie eben im Vortrag von Thomas gehört
+- Command Pettern kapselt Verhalten hinter Interface
+- Z.B. zur Übergabe von Aufgaben an einen Manager
+- Asynchrone Queue, Undo/Redo-Manager
 
 
 ### Interface
@@ -126,7 +128,6 @@ Note:
 - Automatische Typinferenz
 - Keine geschweiften Klammern bei Einzeilern
 - Methodenreferenz (yey, function pointers!), wenn Parameter 1:1 übernommen wird
-- Wie auch bei anonymen Klassen in Variablen speicherbar
 
 
 ### `@FunctionalInterface`
@@ -172,7 +173,7 @@ Note:
 Note: ..., aber wir wollten Pragmatismus
 
 
-### Überleitung zu FP
+### Konvertierung von OOP zu FP
 
 > ... und jetzt nochmal für Pragmatiker, bitte!
 
@@ -243,8 +244,6 @@ System.out.println("Result: " + totalOfDiscountedPrices);
 ```
 
 Note:
-- WAS filtern wir, bzw. WAS bilden wir ab = Commands
-- Kein WIE (Iteration, Collections manipulieren)!
 - WIE unter der Haube gekapselt in Verben (filter, map, reduce)
 - WAS auf Einzelelement-Basis definiert
 
@@ -267,10 +266,10 @@ Note:
 
 ## Umsetzung - Teil 1
 
-Java Boardmittel (aka die Stream-API) & die "Grundverben"
+Java Boardmittel & die "Grundverben"
 
 
-### API
+### Die Java 8 Stream API
 
 - java.util.stream definiert `Stream<T>`
 - java.util.function definiert `FunctionalInterface`s
@@ -281,7 +280,6 @@ Java Boardmittel (aka die Stream-API) & die "Grundverben"
   - ...
 
 Note:
-- Am Beispiel der neuen Stream API aus Java 8
 - Streams stellen "Grundverben" bereit
 - FIs werden von "Grundverben" entgegengenommen
 - FIs = Commands
@@ -307,7 +305,9 @@ collection.stream()
 
 ```java
 teamSchadow.stream()
-    .map((String name) -> name.toUpperCase());
+    .map((String name) -> {
+      return name.toUpperCase();
+    });
 
 // "DOMINIK", "SANDRO", "JOCHEN", ...
 ```
@@ -315,10 +315,12 @@ teamSchadow.stream()
 - Manipulation von Elementen des Stream durch `Function`
 - Rückgabetyp der `Function` bestimmt Typ des anschießenden Streams
 
-Note: Single-Line-Statement, kein Return benötigt
+Note:
+- Single-Line-Statement
+- Kein Return oder Klammern benötigt
 
 
-### filter() ⇒ n:m (m < n)
+### filter() ⇒ n:m (m <= n)
 
 `Stream<T> Stream<T>::filter(Predicate<? super T> predicate)`
 
@@ -448,10 +450,9 @@ Note:
 - Fokus im Folgenden auf einigen Entwurfsmustern
 
 
+### Funktionale Entwurfsmuster
 
-## Umsetzung - Teil 4
-
-Funktionale Entwurfsmuster
+Beispiele für Entwicklung mit FP
 
 
 ### Dependency Injection
