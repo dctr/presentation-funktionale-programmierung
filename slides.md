@@ -264,6 +264,7 @@ Note:
 - Fehleranfälligkeit: weniger Code, (keine Variablenmuation)
 
 
+
 ## Umsetzung - Teil 1
 
 Java Boardmittel (aka die Stream-API) & die "Grundverben"
